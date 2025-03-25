@@ -1,5 +1,12 @@
+"use client"
+
+import dynamic from "next/dynamic"
 import type { Metadata } from "next"
-import HealthTrackingPage from "@/components/tracking/health-tracking-page"
+
+const HealthTrackingPage = dynamic(
+  () => import("@/components/tracking/health-tracking-page"),
+  { ssr: false }
+)
 
 export const metadata: Metadata = {
   title: "Health Tracking | EczemaAI",
@@ -9,4 +16,3 @@ export const metadata: Metadata = {
 export default function TrackingPage() {
   return <HealthTrackingPage />
 }
-
