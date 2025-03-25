@@ -23,9 +23,14 @@ import { useIsMobile } from "@/hooks/use-mobile"
 interface SidebarProps {
   open: boolean
   setOpen: (open: boolean) => void
+  navigationItems: {
+    name: string
+    href: string
+    icon: React.ForwardRefExoticComponent<React.ComponentPropsWithoutRef<any>>
+  }[]
 }
 
-export default function Sidebar({ open, setOpen }: SidebarProps) {
+export default function Sidebar({ open, setOpen, navigationItems }: SidebarProps) {
   const pathname = usePathname()
   const isMobile = useIsMobile()
   const sidebarRef = useRef<HTMLDivElement>(null)
@@ -43,17 +48,6 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       document.removeEventListener("mousedown", handleClickOutside)
     }
   }, [isMobile, open, setOpen])
-
-  const navItems = [
-    { name: "Dashboard", href: "/", icon: Home },
-    { name: "Diagnoses", href: "/diagnoses", icon: Image },
-    { name: "Appointments", href: "/appointments", icon: Calendar },
-    { name: "Messages", href: "/messages", icon: MessageSquare },
-    { name: "Analytics", href: "/analytics", icon: PieChart },
-    { name: "Health Tracking", href: "/tracking", icon: Activity },
-    { name: "Profile", href: "/profile", icon: User },
-    { name: "Settings", href: "/settings", icon: Settings },
-  ]
 
   const sidebarVariants = {
     open: { x: 0, opacity: 1 },
@@ -96,7 +90,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
 
           <div className="flex-1 py-6">
             <nav className="space-y-2 px-3">
-              {navItems.map((item) => {
+              {navigationItems.map((item) => {
                 const isActive = pathname === item.href
                 return (
                   <Link
@@ -146,4 +140,3 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
     </>
   )
 }
-

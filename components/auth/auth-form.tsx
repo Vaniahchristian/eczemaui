@@ -74,9 +74,27 @@ export function AuthForm() {
       localStorage.setItem("token", data.data.token)
       localStorage.setItem("user", JSON.stringify(data.data.user))
 
+      // Redirect based on user role
+      const userRole = data.data.user.role
+      let redirectPath = '/dashboard'
+      
+      switch (userRole) {
+        case 'patient':
+          redirectPath = '/patient/dashboard'
+          break
+        case 'doctor':
+          redirectPath = '/doctor/dashboard'
+          break
+        case 'admin':
+          redirectPath = '/admin/dashboard'
+          break
+        default:
+          redirectPath = '/dashboard'
+      }
+
       // Use Next.js router for client-side navigation
       setTimeout(() => {
-        router.push("/dashboard")
+        router.push(redirectPath)
       }, 1000) // Short delay to show the success message
 
     } catch (err) {
