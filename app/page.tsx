@@ -21,7 +21,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-10">
+      <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
           <div className="flex-1 space-y-8">
             <h1 className="text-5xl font-bold leading-tight">
@@ -42,7 +42,7 @@ export default function Home() {
       </div>
 
       {/* Features Section */}
-      <section id="features" className="container mx-auto px-4 py-20">
+      <section id="features" className="max-w-7xl mx-auto px-4 py-20">
         <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>
         <div className="grid md:grid-cols-3 gap-8">
           <FeatureCard
