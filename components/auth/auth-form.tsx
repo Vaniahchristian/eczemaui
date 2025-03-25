@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/components/ui/use-toast"
 
 export function AuthForm() {
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const { toast } = useToast()
@@ -72,8 +74,11 @@ export function AuthForm() {
       localStorage.setItem("token", data.data.token)
       localStorage.setItem("user", JSON.stringify(data.data.user))
 
-      // Redirect to dashboard
-      window.location.href = "/tracking"
+      // Use Next.js router for client-side navigation
+      setTimeout(() => {
+        router.push("/dashboard")
+      }, 1000) // Short delay to show the success message
+
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong")
     } finally {
