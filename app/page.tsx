@@ -21,7 +21,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-20">
+      <div className="container mx-auto px-4 py-10">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
           <div className="flex-1 space-y-8">
             <h1 className="text-5xl font-bold leading-tight">
@@ -32,9 +32,12 @@ export default function Home() {
               EczemaAI is your personalized assistant for tracking, managing, and understanding your eczema condition. Get insights, track triggers, and make informed decisions about your skin health.
             </p>
           </div>
-          <div className="flex-1 max-w-md w-full bg-white rounded-lg shadow-xl p-8">
+
+          <div className="flex-1 max-w-md w-full bg-white rounded-lg shadow-xl p-8 ">
             <AuthForm />
           </div>
+
+
         </div>
       </div>
 
