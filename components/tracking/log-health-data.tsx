@@ -94,5 +94,38 @@ export default function LogHealthData() {
                     <SelectItem value="walking">Walking</SelectItem>
                     <SelectItem value="running">Running</SelectItem>
                     <SelectItem value="cycling">Cycling</SelectItem>
-                    <SelectItem\
-
+                    <SelectItem value="swimming">Swimming</SelectItem>
+                    <SelectItem value="yoga">Yoga</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="eczema" className="space-y-4 pt-4">
+          {/* Eczema tracking content */}
+        </TabsContent>
+        
+        <TabsContent value="nutrition" className="space-y-4 pt-4">
+          {/* Nutrition tracking content */}
+        </TabsContent>
+        
+        <TabsContent value="sleep" className="space-y-4 pt-4">
+          {/* Sleep tracking content */}
+        </TabsContent>
+        
+        <TabsContent value="mood" className="space-y-4 pt-4">
+          {/* Mood tracking content */}
+        </TabsContent>
+        
+        <TabsContent value="medication" className="space-y-4 pt-4">
+          {/* Medication tracking content */}
+        </TabsContent>
+      </Tabs>
+      
+      <Button onClick={handleSubmit} className="w-full">Save Health Data</Button>
+    </div>
+  );
+}
