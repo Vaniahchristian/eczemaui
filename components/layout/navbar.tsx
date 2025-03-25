@@ -50,14 +50,14 @@ export default function Navbar({
           </span>
         </div>
         <div className="flex items-center space-x-4 ml-auto">
-          <div className="hidden md:flex relative">
+          {/* <div className="hidden md:flex relative">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400 dark:text-slate-500" />
             <input
               type="search"
               placeholder="Search..."
               className="w-[200px] lg:w-[300px] pl-10 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500"
             />
-          </div>
+          </div> */}
 
           <button
             className="p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
