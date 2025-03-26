@@ -2,6 +2,7 @@
 
 import { Suspense } from "react"
 import MessagesPage, { Conversation } from "@/components/messages/messages-page"
+import PatientLayout from "@/components/layout/patient-layout"
 
 // Sample conversations data for patient
 const initialConversations: Conversation[] = [
@@ -41,12 +42,14 @@ const initialConversations: Conversation[] = [
 
 export default function PatientMessages() {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center text-gray-500">Loading messages...</div>
-      </div>
-    }>
-      <MessagesPage initialConversations={initialConversations} />
-    </Suspense>
+    <PatientLayout>
+      <Suspense fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center text-gray-500">Loading messages...</div>
+        </div>
+      }>
+        <MessagesPage initialConversations={initialConversations} />
+      </Suspense>
+    </PatientLayout>
   )
 }
