@@ -6,13 +6,13 @@ import type { Diagnosis } from "./diagnoses-page"
 
 interface DiagnosesTimelineProps {
   diagnoses: Diagnosis[]
-  selectedId: string
+  selectedId?: string | null
   onSelect: (id: string) => void
 }
 
-export default function DiagnosesTimeline({ diagnoses, selectedId, onSelect }: DiagnosesTimelineProps) {
+export default function DiagnosesTimeline({ diagnoses = [], selectedId, onSelect }: DiagnosesTimelineProps) {
   // Sort diagnoses by date (newest first)
-  const sortedDiagnoses = [...diagnoses].sort((a, b) => {
+  const sortedDiagnoses = [...(diagnoses || [])].sort((a, b) => {
     return new Date(b.date).getTime() - new Date(a.date).getTime()
   })
 
@@ -40,6 +40,14 @@ export default function DiagnosesTimeline({ diagnoses, selectedId, onSelect }: D
       default:
         return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
     }
+  }
+
+  if (!diagnoses?.length) {
+    return (
+      <div className="text-center p-4 text-gray-500">
+        No diagnoses available
+      </div>
+    )
   }
 
   return (
@@ -97,4 +105,3 @@ export default function DiagnosesTimeline({ diagnoses, selectedId, onSelect }: D
     </div>
   )
 }
-
