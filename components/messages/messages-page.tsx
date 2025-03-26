@@ -47,93 +47,17 @@ export type Conversation = {
   lastActive?: string
 }
 
-export default function MessagesPage() {
+interface MessagesPageProps {
+  initialConversations?: Conversation[]
+}
+
+export default function MessagesPage({ initialConversations = [] }: MessagesPageProps) {
   const isMobile = useIsMobile()
   const [activeConversation, setActiveConversation] = useState<string | null>(null)
   const [showProfile, setShowProfile] = useState(!isMobile)
   const [searchQuery, setSearchQuery] = useState("")
+  const [conversations, setConversations] = useState<Conversation[]>(initialConversations)
   const currentUserId = "user-001" // This would come from auth context in a real app
-
-  // Sample conversations data
-  const conversations: Conversation[] = [
-    {
-      id: "conv-001",
-      participantId: "doc-001",
-      participantName: "Dr. Emily Chen",
-      participantImage: "/placeholder.svg?height=200&width=200",
-      participantRole: "Dermatologist",
-      lastMessage: {
-        content: "Your latest test results look good. The treatment is working well.",
-        timestamp: "2023-06-08T14:30:00",
-        senderId: "doc-001",
-        status: "read",
-      },
-      unreadCount: 0,
-      isOnline: true,
-    },
-    {
-      id: "conv-002",
-      participantId: "doc-002",
-      participantName: "Dr. Michael Johnson",
-      participantImage: "/placeholder.svg?height=200&width=200",
-      participantRole: "Allergist",
-      lastMessage: {
-        content: "Please send me photos of any new reactions you notice.",
-        timestamp: "2023-06-07T10:15:00",
-        senderId: "doc-002",
-        status: "read",
-      },
-      unreadCount: 0,
-      isOnline: false,
-      lastActive: "2 hours ago",
-    },
-    {
-      id: "conv-003",
-      participantId: "nurse-001",
-      participantName: "Nurse Jessica Taylor",
-      participantImage: "/placeholder.svg?height=200&width=200",
-      participantRole: "Dermatology Nurse",
-      lastMessage: {
-        content: "I've scheduled your prescription refill. You can pick it up tomorrow.",
-        timestamp: "2023-06-05T16:45:00",
-        senderId: "nurse-001",
-        status: "read",
-      },
-      unreadCount: 0,
-      isOnline: true,
-    },
-    {
-      id: "conv-004",
-      participantId: "support-001",
-      participantName: "Patient Support",
-      participantImage: "/placeholder.svg?height=200&width=200",
-      participantRole: "Support Team",
-      lastMessage: {
-        content: "Is there anything else you need help with regarding your treatment plan?",
-        timestamp: "2023-06-02T09:20:00",
-        senderId: "support-001",
-        status: "delivered",
-      },
-      unreadCount: 2,
-      isOnline: true,
-    },
-    {
-      id: "conv-005",
-      participantId: "doc-003",
-      participantName: "Dr. Sarah Williams",
-      participantImage: "/placeholder.svg?height=200&width=200",
-      participantRole: "Dermatologist",
-      lastMessage: {
-        content: "I've reviewed your case. Let's discuss treatment options in our next appointment.",
-        timestamp: "2023-05-28T11:05:00",
-        senderId: "doc-003",
-        status: "read",
-      },
-      unreadCount: 0,
-      isOnline: false,
-      lastActive: "1 day ago",
-    },
-  ]
 
   // Sample messages data
   const messagesData: Record<string, Message[]> = {
@@ -587,4 +511,3 @@ export default function MessagesPage() {
     </DashboardLayout>
   )
 }
-

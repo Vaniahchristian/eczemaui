@@ -24,59 +24,14 @@ export type Diagnosis = {
   progress: number
 }
 
-export default function DiagnosesPage() {
+interface DiagnosesPageProps {
+  initialDiagnoses?: Diagnosis[]
+}
+
+export default function DiagnosesPage({ initialDiagnoses = [] }: DiagnosesPageProps) {
   const [selectedDiagnosis, setSelectedDiagnosis] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<"detail" | "comparison" | "trends">("detail")
-
-  // Sample diagnoses data
-  const diagnoses: Diagnosis[] = [
-    {
-      id: "diag-001",
-      date: "May 15, 2023",
-      condition: "Atopic Dermatitis",
-      severity: "Moderate",
-      location: "Arms, neck",
-      symptoms: ["Redness", "Itching", "Dry skin", "Inflammation"],
-      images: ["/placeholder.svg?height=300&width=400", "/placeholder.svg?height=300&width=400"],
-      notes:
-        "Patient reports increased itching at night and after showering. Environmental triggers may include pollen and stress.",
-      treatment:
-        "Prescribed hydrocortisone cream (1%) to be applied twice daily. Recommended daily moisturizing with fragrance-free lotion.",
-      followUp: "June 10, 2023",
-      doctor: "Dr. Emily Chen",
-      progress: 65,
-    },
-    {
-      id: "diag-002",
-      date: "April 2, 2023",
-      condition: "Contact Dermatitis",
-      severity: "Mild",
-      location: "Hands",
-      symptoms: ["Redness", "Itching", "Blisters"],
-      images: ["/placeholder.svg?height=300&width=400"],
-      notes: "Likely caused by new dish soap. Recommended switching to hypoallergenic products.",
-      treatment: "Prescribed topical corticosteroid cream to be applied twice daily for 7 days.",
-      followUp: "April 16, 2023",
-      doctor: "Dr. Michael Johnson",
-      progress: 90,
-    },
-    {
-      id: "diag-003",
-      date: "February 18, 2023",
-      condition: "Atopic Dermatitis",
-      severity: "Severe",
-      location: "Face, neck, arms",
-      symptoms: ["Severe itching", "Redness", "Cracked skin", "Bleeding", "Pain"],
-      images: ["/placeholder.svg?height=300&width=400", "/placeholder.svg?height=300&width=400"],
-      notes:
-        "Flare-up possibly triggered by recent stress and weather changes. Patient reports difficulty sleeping due to itching.",
-      treatment:
-        "Prescribed stronger corticosteroid cream and oral antihistamines. Recommended wet wrap therapy at night.",
-      followUp: "March 1, 2023",
-      doctor: "Dr. Emily Chen",
-      progress: 85,
-    },
-  ]
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>(initialDiagnoses)
 
   // Find the selected diagnosis
   const currentDiagnosis = diagnoses.find((d) => d.id === selectedDiagnosis) || diagnoses[0]
@@ -161,4 +116,3 @@ export default function DiagnosesPage() {
     </DashboardLayout>
   )
 }
-
