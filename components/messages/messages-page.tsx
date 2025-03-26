@@ -51,35 +51,49 @@ interface MessagesPageProps {
   initialConversations?: Conversation[]
 }
 
-export default function MessagesPage({ initialConversations = [] }: MessagesPageProps) {
+export default function MessagesPage({ initialConversations }: MessagesPageProps) {
   const isMobile = useIsMobile()
   const [activeConversation, setActiveConversation] = useState<string | null>(null)
   const [showProfile, setShowProfile] = useState(!isMobile)
   const [searchQuery, setSearchQuery] = useState("")
-  const [conversations, setConversations] = useState<Conversation[]>(initialConversations || [])
+  const [conversations, setConversations] = useState<Conversation[]>([])
+  const [messages, setMessages] = useState<Record<string, Message[]>>({})
   const currentUserId = "user-001" // This would come from auth context in a real app
 
-  // Sample messages for each conversation
-  const [messages, setMessages] = useState<Record<string, Message[]>>({})
-
+  // Initialize conversations
   useEffect(() => {
-    // Initialize sample messages for each conversation
-    const initialMessages: Record<string, Message[]> = {}
-    conversations.forEach((conv) => {
-      initialMessages[conv.id] = [
-        {
-          id: `msg-${conv.id}-1`,
-          senderId: conv.participantId,
-          receiverId: currentUserId,
-          content: conv.lastMessage.content,
-          timestamp: conv.lastMessage.timestamp,
-          status: "read",
-          type: "text"
-        }
-      ]
-    })
-    setMessages(initialMessages)
+    if (initialConversations && initialConversations.length > 0) {
+      setConversations(initialConversations)
+    }
+  }, [initialConversations])
+
+  // Initialize messages for each conversation
+  useEffect(() => {
+    if (conversations.length > 0) {
+      const initialMessages: Record<string, Message[]> = {}
+      conversations.forEach((conv) => {
+        initialMessages[conv.id] = [
+          {
+            id: `msg-${conv.id}-1`,
+            senderId: conv.participantId,
+            receiverId: currentUserId,
+            content: conv.lastMessage.content,
+            timestamp: conv.lastMessage.timestamp,
+            status: "read",
+            type: "text"
+          }
+        ]
+      })
+      setMessages(initialMessages)
+    }
   }, [conversations, currentUserId])
+
+  // Set first conversation as active by default if none is selected
+  useEffect(() => {
+    if (!activeConversation && conversations.length > 0) {
+      setActiveConversation(conversations[0].id)
+    }
+  }, [activeConversation, conversations])
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
@@ -92,30 +106,15 @@ export default function MessagesPage({ initialConversations = [] }: MessagesPage
     }
   }
 
-  const activeConversationData = conversations.find((conv) => conv.id === activeConversation)
-  const activeMessages = activeConversation ? (messages[activeConversation] || []) : []
-
-  // Set first conversation as active by default if none is selected
-  useEffect(() => {
-    if (!activeConversation && conversations.length > 0) {
-      setActiveConversation(conversations[0].id)
-    }
-  }, [activeConversation, conversations])
-
   // Filter conversations based on search query
   const filteredConversations = conversations.filter(
     (conv) =>
       conv.participantName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      conv.participantRole.toLowerCase().includes(searchQuery.toLowerCase()),
+      conv.participantRole.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  // Handle mobile view - show either conversations list or message thread
-  const handleConversationSelect = (convId: string) => {
-    setActiveConversation(convId)
-    if (isMobile) {
-      setShowProfile(false)
-    }
-  }
+  const activeConversationData = conversations.find((conv) => conv.id === activeConversation)
+  const activeMessages = activeConversation ? (messages[activeConversation] || []) : []
 
   return (
     <DashboardLayout>
@@ -135,7 +134,7 @@ export default function MessagesPage({ initialConversations = [] }: MessagesPage
             <ConversationsList
               conversations={filteredConversations}
               activeConversationId={activeConversation}
-              onSelectConversation={handleConversationSelect}
+              onSelectConversation={handleSelectConversation}
               onSearch={handleSearch}
               searchQuery={searchQuery}
             />
