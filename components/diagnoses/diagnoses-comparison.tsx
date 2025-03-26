@@ -6,14 +6,39 @@ import type { Diagnosis } from "./diagnoses-page"
 
 interface DiagnosesComparisonProps {
   diagnoses: Diagnosis[]
+  selectedId?: string | null
 }
 
-export default function DiagnosesComparison({ diagnoses }: DiagnosesComparisonProps) {
-  const [firstDiagnosisId, setFirstDiagnosisId] = useState<string>(diagnoses[0]?.id || "")
+export default function DiagnosesComparison({ diagnoses = [], selectedId }: DiagnosesComparisonProps) {
+  const [firstDiagnosisId, setFirstDiagnosisId] = useState<string>(selectedId || diagnoses[0]?.id || "")
   const [secondDiagnosisId, setSecondDiagnosisId] = useState<string>(diagnoses[1]?.id || "")
+
+  if (!diagnoses?.length) {
+    return (
+      <div className="text-center p-4 text-gray-500">
+        No diagnoses available for comparison
+      </div>
+    )
+  }
+
+  if (diagnoses.length < 2) {
+    return (
+      <div className="text-center p-4 text-gray-500">
+        At least two diagnoses are needed for comparison
+      </div>
+    )
+  }
 
   const firstDiagnosis = diagnoses.find((d) => d.id === firstDiagnosisId)
   const secondDiagnosis = diagnoses.find((d) => d.id === secondDiagnosisId)
+
+  if (!firstDiagnosis || !secondDiagnosis) {
+    return (
+      <div className="text-center p-4 text-gray-500">
+        Please select two diagnoses to compare
+      </div>
+    )
+  }
 
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
@@ -47,10 +72,6 @@ export default function DiagnosesComparison({ diagnoses }: DiagnosesComparisonPr
   }
 
   const progressChange = getProgressChange()
-
-  if (!firstDiagnosis || !secondDiagnosis) {
-    return <div className="text-center py-8 text-slate-500 dark:text-slate-400">Not enough diagnoses to compare</div>
-  }
 
   return (
     <div className="space-y-6">
@@ -264,4 +285,3 @@ export default function DiagnosesComparison({ diagnoses }: DiagnosesComparisonPr
     </div>
   )
 }
-
