@@ -42,7 +42,7 @@ const doctorAppointments = [
   }
 ]
 
-export default function DoctorAppointments() {
+export default async function DoctorAppointments() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
