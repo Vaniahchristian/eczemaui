@@ -37,35 +37,21 @@ const initialConversations: Conversation[] = [
     unreadCount: 1,
     isOnline: false,
     lastActive: "2025-03-25T16:20:00Z"
-  },
-  {
-    id: "conv-003",
-    participantId: "pat-003",
-    participantName: "Sarah Davis",
-    participantImage: "/placeholder.svg?height=100&width=100",
-    participantRole: "Patient",
-    lastMessage: {
-      content: "I've uploaded new photos of the affected area for your review.",
-      timestamp: "2025-03-25T14:15:00Z",
-      senderId: "pat-003",
-      status: "delivered"
-    },
-    unreadCount: 3,
-    isOnline: false,
-    lastActive: "2025-03-25T14:15:00Z"
   }
 ]
 
 export default function DoctorMessages() {
   return (
     <DoctorLayout>
-      <Suspense fallback={
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center text-gray-500">Loading messages...</div>
-        </div>
-      }>
-        <MessagesPage initialConversations={initialConversations} />
-      </Suspense>
+      <div className="min-h-screen">
+        <Suspense fallback={
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="text-center text-gray-500">Loading messages...</div>
+          </div>
+        }>
+          <MessagesPage initialConversations={initialConversations} />
+        </Suspense>
+      </div>
     </DoctorLayout>
   )
 }

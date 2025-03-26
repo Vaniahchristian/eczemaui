@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import DashboardLayout from "@/components/layout/dashboard-layout"
 import ConversationsList from "@/components/messages/conversations-list"
 import MessageThread from "@/components/messages/message-thread"
 import DoctorProfile from "@/components/messages/doctor-profile"
@@ -62,14 +61,18 @@ export default function MessagesPage({ initialConversations }: MessagesPageProps
 
   // Initialize conversations
   useEffect(() => {
-    if (initialConversations && initialConversations.length > 0) {
+    if (initialConversations?.length) {
       setConversations(initialConversations)
+      // Set first conversation as active by default
+      if (!activeConversation) {
+        setActiveConversation(initialConversations[0].id)
+      }
     }
-  }, [initialConversations])
+  }, [initialConversations, activeConversation])
 
   // Initialize messages for each conversation
   useEffect(() => {
-    if (conversations.length > 0) {
+    if (conversations?.length) {
       const initialMessages: Record<string, Message[]> = {}
       conversations.forEach((conv) => {
         initialMessages[conv.id] = [
@@ -88,13 +91,6 @@ export default function MessagesPage({ initialConversations }: MessagesPageProps
     }
   }, [conversations, currentUserId])
 
-  // Set first conversation as active by default if none is selected
-  useEffect(() => {
-    if (!activeConversation && conversations.length > 0) {
-      setActiveConversation(conversations[0].id)
-    }
-  }, [activeConversation, conversations])
-
   const handleSearch = (query: string) => {
     setSearchQuery(query)
   }
@@ -107,77 +103,70 @@ export default function MessagesPage({ initialConversations }: MessagesPageProps
   }
 
   // Filter conversations based on search query
-  const filteredConversations = conversations.filter(
+  const filteredConversations = conversations?.filter(
     (conv) =>
       conv.participantName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       conv.participantRole.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  ) ?? []
 
-  const activeConversationData = conversations.find((conv) => conv.id === activeConversation)
-  const activeMessages = activeConversation ? (messages[activeConversation] || []) : []
+  const activeConversationData = conversations?.find((conv) => conv.id === activeConversation)
+  const activeMessages = activeConversation && messages ? messages[activeConversation] || [] : []
 
   return (
-    <DashboardLayout>
-      <div className="h-[calc(100vh-4rem)] flex flex-col">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-          className="flex-1 flex overflow-hidden"
+    <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
+      <div className="flex flex-1">
+        {/* Conversations List - Hidden on mobile when a conversation is selected */}
+        <div
+          className={`${
+            isMobile && activeConversation ? "hidden" : "w-80"
+          } border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-slate-900`}
         >
-          {/* Conversations List - Hidden on mobile when viewing a conversation */}
-          <div
-            className={`${
-              isMobile && activeConversation ? "hidden" : "w-full md:w-80 lg:w-96"
-            } border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-slate-900 flex flex-col`}
-          >
-            <ConversationsList
-              conversations={filteredConversations}
-              activeConversationId={activeConversation}
-              onSelectConversation={handleSelectConversation}
-              onSearch={handleSearch}
-              searchQuery={searchQuery}
+          <ConversationsList
+            conversations={filteredConversations}
+            activeConversationId={activeConversation}
+            onSelectConversation={handleSelectConversation}
+            onSearch={handleSearch}
+            searchQuery={searchQuery}
+          />
+        </div>
+
+        {/* Message Thread */}
+        <div
+          className={`${
+            isMobile && !activeConversation ? "hidden" : "flex-1"
+          } flex flex-col bg-slate-50 dark:bg-slate-800`}
+        >
+          {activeConversation && activeConversationData ? (
+            <MessageThread
+              conversation={activeConversationData}
+              messages={activeMessages}
+              currentUserId={currentUserId}
+              onBack={() => isMobile && setActiveConversation(null)}
+              onToggleProfile={() => setShowProfile(!showProfile)}
+              isMobile={isMobile}
+            />
+          ) : (
+            <EmptyState />
+          )}
+        </div>
+
+        {/* Doctor Profile - Hidden on mobile or when toggled off */}
+        {!isMobile && showProfile && activeConversation && activeConversationData && (
+          <div className="w-80 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-slate-900 hidden lg:block">
+            <DoctorProfile
+              participant={{
+                id: activeConversationData.participantId,
+                name: activeConversationData.participantName,
+                image: activeConversationData.participantImage,
+                role: activeConversationData.participantRole,
+                isOnline: activeConversationData.isOnline,
+                lastActive: activeConversationData.lastActive,
+              }}
+              onClose={() => setShowProfile(false)}
             />
           </div>
-
-          {/* Message Thread - Hidden on mobile when viewing conversations list */}
-          <div
-            className={`${
-              isMobile && !activeConversation ? "hidden" : "flex-1"
-            } flex flex-col bg-slate-50 dark:bg-slate-800`}
-          >
-            {activeConversation && activeConversationData ? (
-              <MessageThread
-                conversation={activeConversationData}
-                messages={activeMessages}
-                currentUserId={currentUserId}
-                onBack={() => isMobile && setActiveConversation(null)}
-                onToggleProfile={() => setShowProfile(!showProfile)}
-                isMobile={isMobile}
-              />
-            ) : (
-              <EmptyState />
-            )}
-          </div>
-
-          {/* Doctor Profile - Hidden on mobile or when toggled off */}
-          {!isMobile && showProfile && activeConversation && activeConversationData && (
-            <div className="w-80 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-slate-900 hidden lg:block">
-              <DoctorProfile
-                participant={{
-                  id: activeConversationData.participantId,
-                  name: activeConversationData.participantName,
-                  image: activeConversationData.participantImage,
-                  role: activeConversationData.participantRole,
-                  isOnline: activeConversationData.isOnline,
-                  lastActive: activeConversationData.lastActive,
-                }}
-                onClose={() => setShowProfile(false)}
-              />
-            </div>
-          )}
-        </motion.div>
+        )}
       </div>
-    </DashboardLayout>
+    </div>
   )
 }
