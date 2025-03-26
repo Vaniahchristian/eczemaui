@@ -1,5 +1,6 @@
 "use client"
 
+import { Suspense } from "react"
 import MessagesPage, { Conversation } from "@/components/messages/messages-page"
 
 // Sample conversations data for patient
@@ -39,5 +40,13 @@ const initialConversations: Conversation[] = [
 ]
 
 export default function PatientMessages() {
-  return <MessagesPage initialConversations={initialConversations} />
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center text-gray-500">Loading messages...</div>
+      </div>
+    }>
+      <MessagesPage initialConversations={initialConversations} />
+    </Suspense>
+  )
 }

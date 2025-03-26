@@ -14,7 +14,7 @@ interface ConversationsListProps {
 }
 
 export default function ConversationsList({
-  conversations,
+  conversations = [],
   activeConversationId,
   onSelectConversation,
   onSearch,
@@ -23,13 +23,27 @@ export default function ConversationsList({
   const [filter, setFilter] = useState<"all" | "unread" | "doctors" | "support">("all")
 
   // Apply filters
-  const filteredConversations = conversations.filter((conv) => {
+  const filteredConversations = (conversations || []).filter((conv) => {
     if (filter === "unread") return conv.unreadCount > 0
     if (filter === "doctors")
       return conv.participantRole.includes("Dermatologist") || conv.participantRole.includes("Allergist")
     if (filter === "support") return conv.participantRole.includes("Support") || conv.participantRole.includes("Nurse")
     return true
   })
+
+  if (!conversations?.length) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full p-4 text-gray-500">
+        <div className="mb-4">No conversations yet</div>
+        <button
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          onClick={() => onSelectConversation("")}
+        >
+          Start a conversation
+        </button>
+      </div>
+    )
+  }
 
   const formatTimestamp = (timestamp: string) => {
     const date = new Date(timestamp)
@@ -219,4 +233,3 @@ export default function ConversationsList({
     </>
   )
 }
-
