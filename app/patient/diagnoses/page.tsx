@@ -1,6 +1,8 @@
 "use client"
 
+import { Suspense } from "react"
 import DiagnosesPage, { Diagnosis } from "@/components/diagnoses/diagnoses-page"
+import PatientLayout from "@/components/layout/patient-layout"
 
 // Sample diagnoses data
 const initialDiagnoses: Diagnosis[] = [
@@ -49,5 +51,15 @@ const initialDiagnoses: Diagnosis[] = [
 ]
 
 export default function PatientDiagnoses() {
-  return <DiagnosesPage initialDiagnoses={initialDiagnoses} />
+  return (
+    <PatientLayout>
+      <Suspense fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center text-gray-500">Loading diagnoses...</div>
+        </div>
+      }>
+        <DiagnosesPage initialDiagnoses={initialDiagnoses} />
+      </Suspense>
+    </PatientLayout>
+  )
 }

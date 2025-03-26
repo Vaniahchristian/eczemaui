@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import DashboardLayout from "@/components/layout/dashboard-layout"
 import DiagnosesHeader from "@/components/diagnoses/diagnoses-header"
@@ -28,13 +28,32 @@ interface DiagnosesPageProps {
   initialDiagnoses?: Diagnosis[]
 }
 
-export default function DiagnosesPage({ initialDiagnoses = [] }: DiagnosesPageProps) {
+export default function DiagnosesPage({ initialDiagnoses }: DiagnosesPageProps) {
   const [selectedDiagnosis, setSelectedDiagnosis] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<"detail" | "comparison" | "trends">("detail")
-  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>(initialDiagnoses)
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([])
+
+  useEffect(() => {
+    if (initialDiagnoses?.length) {
+      setDiagnoses(initialDiagnoses)
+      if (!selectedDiagnosis) {
+        setSelectedDiagnosis(initialDiagnoses[0].id)
+      }
+    }
+  }, [initialDiagnoses, selectedDiagnosis])
 
   // Find the selected diagnosis
-  const currentDiagnosis = diagnoses.find((d) => d.id === selectedDiagnosis) || diagnoses[0]
+  const currentDiagnosis = diagnoses?.find((d) => d.id === selectedDiagnosis) || diagnoses?.[0]
+
+  if (!diagnoses?.length) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center text-gray-500">No diagnoses available</div>
+        </div>
+      </DashboardLayout>
+    )
+  }
 
   return (
     <DashboardLayout>
@@ -56,7 +75,7 @@ export default function DiagnosesPage({ initialDiagnoses = [] }: DiagnosesPagePr
             >
               <DiagnosesTimeline
                 diagnoses={diagnoses}
-                selectedId={selectedDiagnosis || diagnoses[0].id}
+                selectedId={selectedDiagnosis || (diagnoses[0]?.id ?? "")}
                 onSelect={setSelectedDiagnosis}
               />
             </motion.div>
@@ -67,44 +86,44 @@ export default function DiagnosesPage({ initialDiagnoses = [] }: DiagnosesPagePr
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <div className="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg shadow-slate-200/50 dark:shadow-slate-900/30">
-                <div className="border-b border-slate-200 dark:border-slate-700">
-                  <div className="flex space-x-1 p-4">
+              <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm">
+                <div className="border-b border-gray-200 dark:border-gray-800">
+                  <nav className="flex space-x-4 px-6 py-4">
                     <button
                       onClick={() => setActiveTab("detail")}
-                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      className={`px-3 py-2 text-sm font-medium rounded-md ${
                         activeTab === "detail"
-                          ? "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400"
-                          : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                          : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                       }`}
                     >
-                      Diagnosis Details
+                      Details
                     </button>
                     <button
                       onClick={() => setActiveTab("comparison")}
-                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      className={`px-3 py-2 text-sm font-medium rounded-md ${
                         activeTab === "comparison"
-                          ? "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400"
-                          : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                          : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                       }`}
                     >
-                      Compare Diagnoses
+                      Compare
                     </button>
                     <button
                       onClick={() => setActiveTab("trends")}
-                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      className={`px-3 py-2 text-sm font-medium rounded-md ${
                         activeTab === "trends"
-                          ? "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400"
-                          : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                          : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                       }`}
                     >
-                      Trends & Analytics
+                      Trends
                     </button>
-                  </div>
+                  </nav>
                 </div>
 
                 <div className="p-6">
-                  {activeTab === "detail" && <DiagnosisDetail diagnosis={currentDiagnosis} />}
+                  {activeTab === "detail" && currentDiagnosis && <DiagnosisDetail diagnosis={currentDiagnosis} />}
                   {activeTab === "comparison" && <DiagnosesComparison diagnoses={diagnoses} />}
                   {activeTab === "trends" && <DiagnosisTrends diagnoses={diagnoses} />}
                 </div>
