@@ -10,11 +10,11 @@ interface DiagnosesTimelineProps {
   onSelect: (id: string) => void
 }
 
-export default function DiagnosesTimeline({ diagnoses = [], selectedId, onSelect }: DiagnosesTimelineProps) {
+export default function DiagnosesTimeline({ diagnoses, selectedId, onSelect }: DiagnosesTimelineProps) {
   // Sort diagnoses by date (newest first)
-  const sortedDiagnoses = [...(diagnoses || [])].sort((a, b) => {
-    return new Date(b.date).getTime() - new Date(a.date).getTime()
-  })
+  const sortedDiagnoses = diagnoses?.length
+    ? [...diagnoses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    : []
 
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
@@ -42,10 +42,16 @@ export default function DiagnosesTimeline({ diagnoses = [], selectedId, onSelect
     }
   }
 
-  if (!diagnoses?.length) {
+  if (!sortedDiagnoses?.length) {
     return (
-      <div className="text-center p-4 text-gray-500">
-        No diagnoses available
+      <div className="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg shadow-slate-200/50 dark:shadow-slate-900/30">
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-6">
+          <h2 className="text-xl font-semibold">Diagnosis Timeline</h2>
+          <p className="text-sm text-white/80 mt-1">No diagnoses available</p>
+        </div>
+        <div className="text-center p-8 text-gray-500">
+          No diagnosis records found
+        </div>
       </div>
     )
   }
@@ -59,46 +65,43 @@ export default function DiagnosesTimeline({ diagnoses = [], selectedId, onSelect
       <div className="p-4">
         <div className="space-y-4">
           {sortedDiagnoses.map((diagnosis, index) => (
-            <motion.div
+            <motion.button
               key={diagnosis.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className={`p-4 rounded-xl cursor-pointer transition-all ${
-                selectedId === diagnosis.id
-                  ? "bg-indigo-50 dark:bg-indigo-900/20 border-2 border-indigo-300 dark:border-indigo-700"
-                  : "bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50"
-              }`}
               onClick={() => onSelect(diagnosis.id)}
+              className={`w-full text-left p-4 rounded-lg transition-colors ${
+                selectedId === diagnosis.id
+                  ? "bg-blue-50 dark:bg-blue-900/20 ring-1 ring-blue-500"
+                  : "hover:bg-gray-50 dark:hover:bg-slate-700"
+              }`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
             >
-              <div className="flex justify-between items-start">
-                <div className="flex items-center">
-                  {getSeverityIcon(diagnosis.severity)}
-                  <span className="ml-2 font-medium">{diagnosis.condition}</span>
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 mt-1">{getSeverityIcon(diagnosis.severity)}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                      {diagnosis.condition}
+                    </p>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize">
+                      {new Date(diagnosis.date).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="mt-1 flex items-center space-x-2">
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getSeverityColor(
+                        diagnosis.severity
+                      )}`}
+                    >
+                      {diagnosis.severity}
+                    </span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400 truncate">{diagnosis.location}</span>
+                  </div>
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{diagnosis.notes}</p>
                 </div>
-                <span className="text-xs text-slate-500 dark:text-slate-400">{diagnosis.date}</span>
               </div>
-              <div className="mt-2 flex flex-wrap gap-2">
-                <span
-                  className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getSeverityColor(diagnosis.severity)}`}
-                >
-                  {diagnosis.severity}
-                </span>
-                <span className="inline-block px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300">
-                  {diagnosis.location}
-                </span>
-              </div>
-              <div className="mt-3">
-                <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">Treatment Progress</div>
-                <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-                  <div
-                    className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full"
-                    style={{ width: `${diagnosis.progress}%` }}
-                  ></div>
-                </div>
-                <div className="text-xs text-right mt-1 text-slate-500 dark:text-slate-400">{diagnosis.progress}%</div>
-              </div>
-            </motion.div>
+            </motion.button>
           ))}
         </div>
       </div>
